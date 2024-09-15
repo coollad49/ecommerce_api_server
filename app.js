@@ -4,8 +4,10 @@ import createHttpError from "http-errors";
 import { configDotenv } from "dotenv";
 import { authRouter } from "./routes/AuthRoute.js";
 
-const app = express()
 const port = process.env.PORT || 3000
+const app = express()
+
+app.use(morgan("dev"))
 
 app.get('/', async(req, res, next)=>{
     res.send("Jesus!!!")
