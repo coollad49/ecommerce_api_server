@@ -1,14 +1,15 @@
 import express from "express";
 import createHttpError from "http-errors";
 import prisma from "@/lib/db"
+import { AuthSchema } from "@/lib/schema";
+import {z} from "zod"
 
 const authRouter = express.Router()
 
 authRouter.post('/register', async(req, res, next)=>{
     try{
-        const {email, password} = req.body
-
-        if(!email || !password) throw createHttpError.BadRequest()
+        const validatedData = AuthSchema.parse(req.body)
+        const {email, password} = validatedData
 
         const userExists = await prisma.user.findUnique({
             where: {
@@ -16,7 +17,7 @@ authRouter.post('/register', async(req, res, next)=>{
             }
         })
 
-        if(userExists) throw createHttpError.Conflict(`${email} is already registered.`)
+        if(userExists) throw createHttpError.Conflict(`${email} exists already`)
         
         const user = await prisma.user.create({
             data: {
@@ -28,7 +29,13 @@ authRouter.post('/register', async(req, res, next)=>{
         res.send(user)
     }
     catch(error){
-        next(error)
+        if (error instanceof z.ZodError) {
+            next(error.issues[0]);
+        }
+        else{
+            next(error)
+        }
+        
     }
     
 })
