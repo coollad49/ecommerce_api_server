@@ -8,9 +8,10 @@ const port = process.env.PORT || 3000
 const app = express()
 
 app.use(morgan("dev"))
+app.use(express.json())
 
 app.get('/', async(req, res, next)=>{
-    res.send("Jesus!!!")
+    res.send("Jesus is glorified!!!")
 })
 
 app.use('/auth', authRouter)
