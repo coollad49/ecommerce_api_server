@@ -8,8 +8,8 @@ POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
-    "email": "coollaD549outlook.com",
-    "password": "nwbewub3wewe"
+    "email": "coollad49@outlook.com",
+    "password": ""
 }
 
 ###refresh-token
