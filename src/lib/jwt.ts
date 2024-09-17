@@ -15,7 +15,8 @@ const signAccessToken = async(userid: string) => {
         const token = jwt.sign(payload, secret, options);
         return token
     } catch(error){
-        throw error
+        console.error(error)
+        throw createHttpError.InternalServerError()
     }
     
 }

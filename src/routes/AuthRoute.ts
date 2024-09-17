@@ -1,7 +1,8 @@
 import express from "express";
 import {z} from "zod"
-import { createUser } from "@/models/User";
+import { createUser, loginUser } from "@/models/User";
 import { signAccessToken } from "@/lib/jwt";
+import createHttpError from "http-errors";
 
 const authRouter = express.Router()
 
@@ -24,7 +25,17 @@ authRouter.post('/register', async(req, res, next)=>{
 })
 
 authRouter.post('/login', async(req, res, next)=>{
-    res.send("login route")
+    try{
+        const user = await loginUser(req)
+        const accessToken = await signAccessToken(user.id)
+        res.send({accessToken})
+    } catch(error){
+        if (error instanceof z.ZodError) {
+            return next(createHttpError.BadRequest("Invalid email/password"));
+        }
+
+        next(error)
+    }
 })
 
 authRouter.post('/refresh-token', async(req, res, next)=>{
