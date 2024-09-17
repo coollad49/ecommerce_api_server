@@ -1,8 +1,11 @@
 import express, {Request, Response, NextFunction} from "express";
 import morgan from "morgan";
 import createHttpError from "http-errors";
-import { configDotenv } from "dotenv";
+import dotenv from "dotenv";
 import { authRouter } from "@/routes/AuthRoute"
+import { verifyAccessToken } from "@/lib/jwt";
+
+dotenv.config()
 
 const port = process.env.PORT || 3000
 const app = express()
@@ -10,7 +13,7 @@ const app = express()
 app.use(morgan("dev"))
 app.use(express.json())
 
-app.get('/', async(req, res, next)=>{
+app.get('/', verifyAccessToken, async(req, res, next)=>{
     res.send("Jesus is glorified!!!")
 })
 

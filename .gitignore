@@ -2,4 +2,4 @@
 
 .env*
 
-/rest.http
+rest.http
