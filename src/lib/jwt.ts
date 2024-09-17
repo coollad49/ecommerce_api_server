@@ -5,7 +5,7 @@ const signAccessToken = async(userid: string) => {
     try{
         const payload: JwtPayload = {
         }
-        const secret: Secret = "powerful word of God"
+        const secret: Secret = process.env.ACCESS_TOKEN_SECRET!
         const options: SignOptions = {
             expiresIn: "1hr",
             issuer: "lucasbuilds",
