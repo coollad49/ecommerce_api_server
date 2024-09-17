@@ -1,14 +1,15 @@
 import express from "express";
 import {z} from "zod"
 import { createUser } from "@/models/User";
+import { signAccessToken } from "@/lib/jwt";
 
 const authRouter = express.Router()
 
 authRouter.post('/register', async(req, res, next)=>{
     try{
         const user = await createUser(req)
-
-        res.send(user)
+        const accessToken = await signAccessToken(user.id)
+        res.send({accessToken})
     }
     catch(error){
         if (error instanceof z.ZodError) {
