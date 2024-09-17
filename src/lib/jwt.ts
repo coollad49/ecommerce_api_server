@@ -26,6 +26,26 @@ const signAccessToken = async(userid: string) => {
     
 }
 
+const signRefreshToken = async(userid: string) => {
+    try{
+        const payload: JwtPayload = {
+        }
+        const secret: Secret = process.env.REFRESH_TOKEN_SECRET!
+        const options: SignOptions = {
+            expiresIn: "1y",
+            issuer: "lucasbuilds",
+            audience: userid
+        }
+    
+        const token = jwt.sign(payload, secret, options);
+        return token
+    } catch(error){
+        console.error(error)
+        throw createHttpError.InternalServerError()
+    }
+    
+}
+
 const verifyAccessToken = (req:any, res:any, next:any )=>{
     if(!req.headers['authorization']) throw next(createHttpError.Unauthorized())
     const authHeader = req.headers['authorization']
@@ -42,4 +62,19 @@ const verifyAccessToken = (req:any, res:any, next:any )=>{
     })
 }
 
-export {signAccessToken, verifyAccessToken}
+const verifyRefreshToken = (token: string): Promise<string> => {
+    const secret = process.env.REFRESH_TOKEN_SECRET!
+
+    return new Promise((resolve, reject) => {
+      jwt.verify(token, secret, (err, payload:any) => {
+        if (err) {
+          reject(createHttpError.Unauthorized())
+        } else {
+          const userId: string = payload.aud
+          resolve(userId)
+        }
+      })
+    })
+}
+
+export {signAccessToken, verifyAccessToken, signRefreshToken, verifyRefreshToken}
