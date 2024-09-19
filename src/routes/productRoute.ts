@@ -87,4 +87,21 @@ productRouter.patch("/:id", verifyAccessToken, async(req, res, next)=>{
     }
 })
 
+productRouter.delete("/:id", verifyAccessToken, async(req, res, next)=>{
+    try{
+        const deletedProduct = await prisma.product.delete({
+            where: {
+                id: parseInt(req.params.id)
+            }
+        })
+        if (!deletedProduct) throw createHttpError.NotFound("Product not found")
+        
+        res.send({ message: "Product deleted successfully", product: deletedProduct })
+    } catch(error){
+        next(error)
+    }
+    
+
+})
+
 export {productRouter}
