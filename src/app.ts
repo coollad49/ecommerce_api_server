@@ -3,6 +3,7 @@ import morgan from "morgan";
 import createHttpError from "http-errors";
 import dotenv from "dotenv";
 import { authRouter } from "@/routes/AuthRoute"
+import { productRouter } from "@/routes/productRoute";
 import { verifyAccessToken } from "@/lib/jwt";
 
 dotenv.config()
@@ -18,6 +19,8 @@ app.get('/', verifyAccessToken, async(req, res, next)=>{
 })
 
 app.use('/auth', authRouter)
+
+app.use('/products', productRouter)
 
 app.use(async (req, res, next)=>{
     next(createHttpError.NotFound())
