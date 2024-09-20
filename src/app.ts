@@ -5,6 +5,16 @@ import dotenv from "dotenv";
 import { authRouter } from "@/routes/AuthRoute"
 import { productRouter } from "@/routes/productRoute";
 import { verifyAccessToken } from "@/lib/jwt";
+import client from "@/lib/redis";
+
+const initializeRedis = async()=>{
+    try{
+        await client.connect();
+    } catch(error){
+        console.error('Error connecting to Redis:', error);
+    }
+}
+initializeRedis()
 
 dotenv.config()
 
