@@ -1,5 +1,6 @@
 import express from "express";
 import prisma from "@/lib/db"
+import { Prisma } from "@prisma/client";
 import {z} from "zod"
 import { ProductSchema, PatchedProductSchema } from "@/lib/schema";
 import { verifyAccessToken } from "@/lib/jwt";
@@ -98,7 +99,16 @@ productRouter.delete("/:id", verifyAccessToken, async(req, res, next)=>{
         
         res.send({ message: "Product deleted successfully", product: deletedProduct })
     } catch(error){
-        next(error)
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2025") {
+                next(createHttpError.NotFound("Product not found or already deleted"));
+            } else {
+                next(createHttpError.InternalServerError("Database error occurred"));
+            }
+        } else{
+          next(error)  
+        }
+        
     }
     
 
