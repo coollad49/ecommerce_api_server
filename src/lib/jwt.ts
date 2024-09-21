@@ -1,6 +1,7 @@
 import jwt, {SignOptions, JwtPayload, Secret} from "jsonwebtoken"
 import createHttpError from "http-errors"
 import { Request, response, NextFunction } from "express"
+import client from "@/lib/redis"
 
 interface customRequest extends Request{
     payload?: any;
@@ -26,18 +27,23 @@ const signAccessToken = async(userid: string) => {
     
 }
 
-const signRefreshToken = async(userid: string) => {
+const signRefreshToken = async(userId: string) => {
     try{
         const payload: JwtPayload = {
         }
         const secret: Secret = process.env.REFRESH_TOKEN_SECRET!
+        const expiringData = 365*24*60*60
         const options: SignOptions = {
             expiresIn: "1y",
             issuer: "lucasbuilds",
-            audience: userid
+            audience: userId
         }
     
         const token = jwt.sign(payload, secret, options);
+        client.set(userId, token, {
+            EX: expiringData,
+        })
+        
         return token
     } catch(error){
         console.error(error)
@@ -62,19 +68,26 @@ const verifyAccessToken = (req:any, res:any, next:any )=>{
     })
 }
 
-const verifyRefreshToken = (token: string): Promise<string> => {
+const verifyRefreshToken = async(token: string) => {
     const secret = process.env.REFRESH_TOKEN_SECRET!
 
-    return new Promise((resolve, reject) => {
-      jwt.verify(token, secret, (err, payload:any) => {
-        if (err) {
-          reject(createHttpError.Unauthorized())
-        } else {
-          const userId: string = payload.aud
-          resolve(userId)
-        }
-      })
-    })
+    try {
+        const payload = await new Promise((resolve, reject) => {
+          jwt.verify(token, secret, (err, decoded) => {
+            if (err) {
+              return reject(createHttpError.Unauthorized());
+            }
+            resolve(decoded);
+          });
+        });
+        
+        const userId: string = (payload as any).aud;
+        const tokenInRedis = await client.get(userId)
+        if(tokenInRedis === token) return userId
+        throw createHttpError.InternalServerError()
+    } catch (error) {
+        throw error;  // Or handle the error differently depending on your app's flow
+    }
 }
 
 export {signAccessToken, verifyAccessToken, signRefreshToken, verifyRefreshToken}
