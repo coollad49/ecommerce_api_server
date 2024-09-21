@@ -3,6 +3,7 @@ import {z} from "zod"
 import { createUser, loginUser } from "@/models/User";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "@/lib/jwt";
 import createHttpError from "http-errors";
+import client from "@/lib/redis";
 
 const authRouter = express.Router()
 
@@ -56,7 +57,17 @@ authRouter.post('/refresh-token', async(req, res, next)=>{
 })
 
 authRouter.delete('/logout', async(req, res, next)=>{
-    res.send("Logout route")
+    try{
+        const {refreshToken} = req.body
+        const userId = await verifyRefreshToken(refreshToken)
+        if(!userId) throw createHttpError.Unauthorized()
+        client.del(userId)
+        
+        res.sendStatus(204)
+    
+    } catch(error){
+        next(error)
+    }
 })
 
 
