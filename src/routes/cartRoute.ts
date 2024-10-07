@@ -16,13 +16,18 @@ cartRouter.get("/", verifyAccessToken, async(req, res, next)=>{
             },
 
             include: {
-                products: true
+                products: {
+                    include: {
+                        product: true
+                    }
+                }
             }
         })
         if(!cart){
             await prisma.cart.create({
                 data: {ownerId: (req as customRequest).payload.user}
             })
+            
         }
 
         if(cart) res.json(cart.products)
