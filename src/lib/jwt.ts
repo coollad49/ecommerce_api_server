@@ -2,6 +2,7 @@ import jwt, {SignOptions, JwtPayload, Secret} from "jsonwebtoken"
 import createHttpError from "http-errors"
 import client from "@/lib/redis"
 import { customRequest } from "@/lib/Interfaces"
+import { Request, Response, NextFunction } from "express"
 
 const signAccessToken = async(userid: string) => {
     try{
@@ -49,7 +50,7 @@ const signRefreshToken = async(userId: string) => {
     
 }
 
-const verifyAccessToken = (req:any, res:any, next:any )=>{
+const verifyAccessToken = (req:Request, res:Response, next:NextFunction )=>{
     if(!req.headers['authorization']) throw next(createHttpError.Unauthorized())
     const authHeader = req.headers['authorization']
     const bearerToken = authHeader.split(" ")
