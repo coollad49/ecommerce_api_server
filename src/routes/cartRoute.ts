@@ -11,14 +11,19 @@ const cartRouter = express.Router()
 cartRouter.get("/", verifyAccessToken, async(req, res, next)=>{
     try {
         const cart = await prisma.cart.findUnique({
-            where: {
-                ownerId: (req as customRequest).payload.user
-            },
-
+            where: { ownerId: (req as customRequest).payload.user},
             include: {
                 products: {
                     include: {
-                        product: true
+                        product: {
+                            select: {
+                                id: true,
+                                name: true,
+                                price: true,
+                                stock: true,
+                                description: true
+                            }
+                        }
                     }
                 }
             }
@@ -27,10 +32,17 @@ cartRouter.get("/", verifyAccessToken, async(req, res, next)=>{
             await prisma.cart.create({
                 data: {ownerId: (req as customRequest).payload.user}
             })
-            
+
         }
 
-        if(cart) res.json(cart.products)
+        const sanitizedCartProducts = cart!.products.map((item)=>({
+            productId: item.product.id,
+            name: item.product.name,
+            price: item.product.price,
+            stock: item.product.stock,
+            description: item.product.description
+        }))
+        if(cart) res.json(sanitizedCartProducts)
         
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
