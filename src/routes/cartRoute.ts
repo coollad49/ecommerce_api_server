@@ -10,19 +10,25 @@ const cartRouter = express.Router()
 
 cartRouter.get("/", verifyAccessToken, async(req, res, next)=>{
     try {
-        const cart = prisma.cart.findUnique({
+        const cart = await prisma.cart.findUnique({
             where: {
-                id: (req as customRequest).payload.user
+                ownerId: (req as customRequest).payload.user
+            },
+
+            include: {
+                products: true
             }
         })
-        if(!cart){prisma.cart.create({
-            data: {
-                ownerId: (req as customRequest).payload.user
-            }
-        })}
-        
-        res.json(cart.products)
+        if(!cart){
+            await prisma.cart.create({
+                data: {
+                    ownerId: (req as customRequest).payload.user
+                }
+            })
+        }
 
+        if(cart) res.json(cart.products)
+        
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === "P2025") {
