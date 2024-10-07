@@ -6,15 +6,16 @@ import { authRouter } from "@/routes/AuthRoute"
 import { productRouter } from "@/routes/productRoute";
 import { verifyAccessToken } from "@/lib/jwt";
 import client from "@/lib/redis";
+import { cartRouter } from "./routes/cartRoute";
 
-const initializeRedis = async()=>{
-    try{
-        await client.connect();
-    } catch(error){
-        console.error('Error connecting to Redis:', error);
-    }
-}
-initializeRedis()
+// const initializeRedis = async()=>{
+//     try{
+//         await client.connect();
+//     } catch(error){
+//         console.error('Error connecting to Redis:', error);
+//     }
+// }
+// initializeRedis()
 
 dotenv.config()
 
@@ -31,6 +32,8 @@ app.get('/', verifyAccessToken, async(req, res, next)=>{
 app.use('/auth', authRouter)
 
 app.use('/products', productRouter)
+
+app.use("/cart", cartRouter)
 
 app.use(async (req, res, next)=>{
     next(createHttpError.NotFound())

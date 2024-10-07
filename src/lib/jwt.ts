@@ -1,15 +1,12 @@
 import jwt, {SignOptions, JwtPayload, Secret} from "jsonwebtoken"
 import createHttpError from "http-errors"
-import { Request, response, NextFunction } from "express"
 import client from "@/lib/redis"
-
-interface customRequest extends Request{
-    payload?: any;
-}
+import { customRequest } from "@/lib/Interfaces"
 
 const signAccessToken = async(userid: string) => {
     try{
         const payload: JwtPayload = {
+            user: userid
         }
         const secret: Secret = process.env.ACCESS_TOKEN_SECRET!
         const options: SignOptions = {
@@ -40,9 +37,9 @@ const signRefreshToken = async(userId: string) => {
         }
     
         const token = jwt.sign(payload, secret, options);
-        client.set(userId, token, {
-            EX: expiringData,
-        })
+        // client.set(userId, token, {
+        //     EX: expiringData,
+        // })
         
         return token
     } catch(error){

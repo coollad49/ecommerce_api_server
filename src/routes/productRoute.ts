@@ -30,9 +30,7 @@ productRouter.get("/:id", async(req, res, next)=>{
 
 productRouter.post("/", verifyAccessToken, async(req, res, next)=>{
     try{
-        console.log(req.body)
         const validatedData = ProductSchema.parse(req.body)
-        console.log(validatedData)
         const {name, description, price, stock, categories} = validatedData
         const product = await prisma.product.create({
             data: {
@@ -81,6 +79,13 @@ productRouter.patch("/:id", verifyAccessToken, async(req, res, next)=>{
     } catch(error){
         if (error instanceof z.ZodError) {
             next(error.issues[0]);
+        }
+        else if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2025") {
+                next(createHttpError.NotFound("Product not found or already deleted"));
+            } else {
+                next(createHttpError.InternalServerError("Database error occurred"));
+            }
         }
         else{
             next(error)
