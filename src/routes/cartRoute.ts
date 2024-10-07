@@ -43,8 +43,9 @@ cartRouter.get("/", verifyAccessToken, async(req, res, next)=>{
 
 cartRouter.post("/:productId", verifyAccessToken, async(req, res, next)=>{
     const { productId } = req.params;
+    const {quantity} = req.body;
     try{
-        const cart = await prisma.cart.findUnique({
+        let cart = await prisma.cart.findUnique({
             where: {ownerId: (req as customRequest).payload.user}
         })
         if(!cart){
@@ -53,12 +54,32 @@ cartRouter.post("/:productId", verifyAccessToken, async(req, res, next)=>{
             })
         }
 
-        await prisma.cart.update({
-            where: { id: cart?.id },
-            data: {
-                products: { connect: {id: parseInt(productId)} }
+        const existingCartItem = await prisma.cartItem.findUnique({
+            where: {
+                cartId_productId: {
+                    cartId: cart!.id,
+                    productId: parseInt(productId)
+                }
             }
         })
+        if(existingCartItem){
+            await prisma.cartItem.update({
+                where: {
+                    id: existingCartItem.id
+                },
+                data: {
+                    quantity: existingCartItem.quantity + (quantity || 1)
+                }
+            })
+        } else{
+            await prisma.cartItem.create({
+                data: {
+                    cartId: cart!.id,
+                    productId: parseInt(productId),
+                    quantity: quantity || 1,
+                },
+            });
+        }
 
         res.status(200).json({message: "Product added to cart successfully"})
 

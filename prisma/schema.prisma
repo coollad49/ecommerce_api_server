@@ -21,7 +21,18 @@ model Cart{
   id String @id @default(cuid())
   owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String @unique
-  products Product[]
+  products CartItem[]
+}
+
+model CartItem{
+  id String @id @default(cuid())
+  cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId String
+  product Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity Int
+
+  @@unique([cartId, productId]) //composite unique constriants
 }
 
 model Product {
@@ -30,7 +41,7 @@ model Product {
   description String?
   price       Float
   stock       Int
-  cart        Cart[]
+  cart        CartItem[]
   categories  Category[]  @relation("ProductCategories")
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
