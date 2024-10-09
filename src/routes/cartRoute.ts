@@ -147,4 +147,38 @@ cartRouter.delete("/", verifyAccessToken, async(req, res, next)=>{
     }
 })
 
+cartRouter.get("/summary", verifyAccessToken, async(req, res, next)=>{
+    try {
+        const cart = await prisma.cart.findUnique({
+            where: { ownerId: (req as customRequest).payload.user},
+            include: {
+                products: {
+                    include: { product: { select: {  price: true, description: true }}}
+                }
+            }
+        })
+
+        let totalItems = 0
+        let totalPrice = 0
+        let itemPrice = 0
+
+        cart?.products.map(item=>(
+            totalItems += item.quantity,
+            itemPrice = item.quantity * item.product.price,
+            totalPrice += itemPrice
+        ))
+        res.json({ totalItems: totalItems, totalPrice: parseFloat(totalPrice.toFixed(2))})
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2025") {
+                next(createHttpError.NotFound("Cart not found or already deleted"));
+            } else {
+                next(createHttpError.InternalServerError("Database error occurred"));
+            }
+        }
+        else{
+            next(error)
+        }
+    }
+})
 export {cartRouter}
