@@ -153,7 +153,7 @@ cartRouter.get("/summary", verifyAccessToken, async(req, res, next)=>{
             where: { ownerId: (req as customRequest).payload.user},
             include: {
                 products: {
-                    include: { product: { select: {  price: true, description: true }}}
+                    include: { product: { select: { price: true }}}
                 }
             }
         })
