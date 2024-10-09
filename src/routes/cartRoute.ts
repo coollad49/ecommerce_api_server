@@ -22,7 +22,7 @@ cartRouter.get("/", verifyAccessToken, async(req, res, next)=>{
             await prisma.cart.create({
                 data: {ownerId: (req as customRequest).payload.user}
             })
-
+            return res.json([]);
         }
         const sanitizedJSON = cart!.products.map((item)=>({
             productId: item.product.id,
@@ -115,6 +115,28 @@ cartRouter.delete("/:productId", verifyAccessToken, async(req, res, next)=>{
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === "P2025") {
                 next(createHttpError.NotFound("Product not in Cart.."));
+            } else {
+                next(createHttpError.InternalServerError("Database error occurred"));
+            }
+        }
+        else{
+            next(error)
+        }
+    }
+})
+
+cartRouter.delete("/", verifyAccessToken, async(req, res, next)=>{
+    try {
+        await prisma.cart.delete({
+            where: { ownerId: (req as customRequest).payload.user},
+        })
+
+        res.status(200).send({message: "Cart Deleted"})
+        
+    } catch(error){
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === "P2025") {
+                next(createHttpError.NotFound("Cart not found or already deleted"));
             } else {
                 next(createHttpError.InternalServerError("Database error occurred"));
             }
