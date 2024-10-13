@@ -41,6 +41,7 @@ model Product {
   description String?
   price       Float
   stock       Int
+  imgUrl      String?
   cart        CartItem[]
   categories  Category[]  @relation("ProductCategories")
   createdAt   DateTime    @default(now())
