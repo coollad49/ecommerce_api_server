@@ -1,12 +1,8 @@
-import express, {Request, Response, NextFunction} from "express";
+import express from "express";
 import morgan from "morgan";
-import createHttpError from "http-errors";
 import dotenv from "dotenv";
-import { authRouter } from "@/routes/AuthRoute"
-import { productRouter } from "@/routes/productRoute";
-import { verifyAccessToken } from "@/lib/jwt";
+import routes from "@/routes"
 import client from "@/lib/redis";
-import { cartRouter } from "./routes/cartRoute";
 import swaggerDocs from "@/lib/swagger";
 
 // const initializeRedis = async()=>{
@@ -28,29 +24,7 @@ app.use(express.json())
 
 swaggerDocs(app, port)
 
-app.get('/', verifyAccessToken, async(req, res, next)=>{
-    res.send("Jesus is glorified!!!")
-})
-
-app.use('/auth', authRouter)
-
-app.use('/products', productRouter)
-
-app.use("/cart", cartRouter)
-
-app.use(async (req, res, next)=>{
-    next(createHttpError.NotFound())
-})
-
-app.use((err:any, req:Request, res:Response, next:NextFunction)=>{
-    res.status(err.status || 500)
-    res.send({
-        error: {
-            status: err.status || 500,
-            message: err.message,
-        },
-    })
-})
+routes(app)
 
 app.listen(port, ()=>{
     console.log(`Server running on port ${port}`)
