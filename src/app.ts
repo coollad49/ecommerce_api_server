@@ -7,6 +7,7 @@ import { productRouter } from "@/routes/productRoute";
 import { verifyAccessToken } from "@/lib/jwt";
 import client from "@/lib/redis";
 import { cartRouter } from "./routes/cartRoute";
+import swaggerDocs from "@/lib/swagger";
 
 // const initializeRedis = async()=>{
 //     try{
@@ -24,6 +25,8 @@ const app = express()
 
 app.use(morgan("dev"))
 app.use(express.json())
+
+swaggerDocs(app, port)
 
 app.get('/', verifyAccessToken, async(req, res, next)=>{
     res.send("Jesus is glorified!!!")
