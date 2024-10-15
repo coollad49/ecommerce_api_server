@@ -2,7 +2,6 @@ import {Express, Request, Response} from 'express'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import {version} from '../../package.json'
-import swaggerJSDoc from 'swagger-jsdoc'
 
 const options: swaggerJsdoc.Options ={
     definition: {
@@ -26,7 +25,7 @@ const options: swaggerJsdoc.Options ={
             }
         ]
     },
-    apis: ['@/routes/*.ts', "@/app.ts"]
+    apis: ['./src/routes/*.ts']
 }
 
 const swaggerSpec = swaggerJsdoc(options)
@@ -36,7 +35,7 @@ const swaggerDocs = (app: Express, port: any)=>{
     app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
     // Docs in JSON format
-    app.get("docs.json", (req: Request, res: Response)=>{
+    app.get("/docs.json", (req: Request, res: Response)=>{
         res.setHeader("Content-Type", "application/json");
         res.send(swaggerSpec)
     })

@@ -3,6 +3,19 @@ import {register, login, refresh_token, logout} from "@/controller/Auth.Controll
 
 const authRouter = express.Router()
 
+/**
+ * @openapi
+ * '/auth/register':
+ *  post:
+ *      tags:
+ *          - User
+ *      summary: Register a user
+ *      requestBody:
+ *          required: true
+ *          contents:
+ *              application/json:
+ *          schema:
+ */
 authRouter.post('/register', register)
 
 authRouter.post('/login', login)

@@ -6,6 +6,18 @@ import { cartRouter } from "@/routes/cartRoute";
 import createHttpError from "http-errors";
 
 function routes(app: Express){
+
+    /**
+     * @openapi
+     * /:
+     *  get:
+     *      tags:
+     *          - Home
+     *      description: default route
+     *      responses:
+     *          200:
+     *              description: Api is running fine.
+     */
     app.get('/', verifyAccessToken, async(req, res, next)=>{
         res.send("Jesus is glorified!!!")
     })
