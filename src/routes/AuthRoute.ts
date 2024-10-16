@@ -12,9 +12,20 @@ const authRouter = express.Router()
  *      summary: Register a user
  *      requestBody:
  *          required: true
- *          contents:
+ *          content:
  *              application/json:
- *          schema:
+ *                  schema:
+ *                      $ref: '#/components/schema/CreateUserInput'
+ *      responses:
+ *          200:
+ *              description: Success
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *          409:
+ *              description: Conflict
+ *          400:
+ *              description: Bad request
  */
 authRouter.post('/register', register)
 

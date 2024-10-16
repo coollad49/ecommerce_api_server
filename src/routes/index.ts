@@ -16,7 +16,9 @@ function routes(app: Express){
      *      description: default route
      *      responses:
      *          200:
-     *              description: Api is running fine.
+     *              description: Success.
+     *          401:
+     *              description: Unauthorized.
      */
     app.get('/', verifyAccessToken, async(req, res, next)=>{
         res.send("Jesus is glorified!!!")

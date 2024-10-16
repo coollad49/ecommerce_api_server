@@ -2,29 +2,68 @@ import express from "express";
 import prisma from "@/lib/db"
 import { Prisma } from "@prisma/client";
 import {z} from "zod"
-import { ProductSchema, PatchedProductSchema } from "@/lib/schema";
+import { ProductSchema, PatchedProductSchema, getProductSchema } from "@/lib/schema";
 import { verifyAccessToken } from "@/lib/jwt";
 import createHttpError from "http-errors";
 
 const productRouter = express.Router()
 
+/**
+     * @openapi
+     * /products:
+     *  get:
+     *      tags:
+     *          - Products
+     *      description: Get all available Products.
+     *      responses:
+     *          200:
+     *              description: Success.
+     */
 productRouter.get("/", async(req, res, next)=>{
     const products = await prisma.product.findMany()
     res.json(products)
 })
 
+/**
+ * @openapi
+ * '/products/{id}':
+ *  get:
+ *      tags:
+ *          - Products
+ *      summary: Get a single product by productId
+ *      parameters:
+ *      - name: id
+ *        in: path
+ *        description: The id of the product
+ *        required: true
+ *      responses:
+ *          200:
+ *              description: Success
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schema/Product'
+ *          404:
+ *              description: Product not found. 
+ */
 productRouter.get("/:id", async(req, res, next)=>{
     try{
+        const id = getProductSchema.parse(parseInt(req.params.id))
         const product = await prisma.product.findUnique({
             where: {
-                id: parseInt(req.params.id)
+                id: id
             }
         })
         if(!product) throw createHttpError.NotFound("Product not found")
 
         res.json(product)
     } catch(error){
-        next(error)
+        if (error instanceof z.ZodError) {
+            next(error.issues[0]);
+        }
+        else{
+            next(error)
+        }
     }
 })
 
