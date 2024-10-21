@@ -91,6 +91,32 @@ authRouter.post('/login', login)
 
 authRouter.post('/refresh-token', refresh_token)
 
+/**
+ * @openapi
+ * /auth/logout:
+ *  delete:
+ *      summary: log out a user
+ *      description: Invalidate the user's refresh token to terminate the session, ensuring the user cannot use the token to refresh their access token anymore.
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          refreshToken:
+ *                              type: string
+ *                              example: "some-refresh-token"
+ *                      required:
+ *                          - refreshToken
+ *      responses:
+ *          204:
+ *              description: User succesfully logged out.
+ *          400:
+ *              description: Invalid or missing refresh token.
+ *          500:
+ *              description: Server error.
+ */
 authRouter.delete('/logout', logout)
 
 
