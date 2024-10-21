@@ -46,6 +46,47 @@ const authRouter = express.Router()
  */
 authRouter.post('/register', register)
 
+/**
+ * @openapi
+ * /auth/login:
+ *  post:
+ *      summary: Log in a user
+ *      description: Authenticate a user by validating their credentials and returning an access token and refresh token. These tokens can be used to access protected resources and refresh the session.
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          email:
+ *                              type: string
+ *                              example: "user@example.com"
+ *                          password:
+ *                              type: password
+ *                              example: "password123"
+ *                      required:
+ *                          - email
+ *                          - password
+ *      responses:
+ *          200:
+ *              description: User successfully logged in.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              accessToken:
+ *                                  type: string
+ *                              refreshToken:
+ *                                  type: string
+ *          400:
+ *              description: User not Found.
+ *          401:
+ *              description: Email/Password not valid
+ *          500:
+ *              description: Server error.
+ */
 authRouter.post('/login', login)
 
 authRouter.post('/refresh-token', refresh_token)
