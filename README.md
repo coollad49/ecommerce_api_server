@@ -1,13 +1,12 @@
-# E-commerce API
+# E-commerce API Server
 
 ## Overview
-This project is an E-commerce API that provides endpoints for managing products, orders, and users. It is built using Node.js and Express.
+This project is an E-commerce API that provides endpoints for managing products, carts, and users. It is built using Node.js, Express, Prisma for DB with Typescript.
 
 ## Features
 - User authentication and authorization
 - CRUD operations for products
-- Order management
-- Secure payment processing
+- Cart management
 
 ## Installation
 1. Clone the repository:
