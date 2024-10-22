@@ -42,7 +42,7 @@ productRouter.get("/", async(req, res, next)=>{
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schema/Product'
+ *                          $ref: '#/components/schema/getProduct'
  *          404:
  *              description: Product not found. 
  */
@@ -67,6 +67,63 @@ productRouter.get("/:id", async(req, res, next)=>{
     }
 })
 
+/**
+ * @openapi
+ * /products:
+ *  post:
+ *      tags:
+ *          - Products
+ *      security:
+ *          - bearerAuth: []
+ *      summary: Create a new product
+ *      description: This endpoint allows authorized users (typically admins or store managers) to create a new product. Users must provide the necessary product details such as name, description, price, and category. The new product will then be saved in the database, and a response containing the created product's information will be returned. Validation ensures that all required fields are provided and meet the expected criteria. If any required data is missing or invalid, an error response will be returned.
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schema/CreateProduct'
+ *      responses:
+ *          201:
+ *              description: Product successfully created.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              id:
+ *                                  type: string
+ *                                  description: The ID of the newly created product.
+ *                                  example: "abc123"
+ *                              name:
+ *                                  type: string
+ *                                  description: The name of the product.
+ *                                  example: "Nike Shoe"
+ *                              description:
+ *                                  type: string
+ *                                  description: The description of the product.
+ *                                  example: "A nice brand"
+ *                              price:
+ *                                  type: number
+ *                                  description: The price of the product.
+ *                                  example: 10000
+ *                              stock:
+ *                                  type: number
+ *                                  description: The available stock of the product.
+ *                                  example: 4
+ *                              categories:
+ *                                  type: array
+ *                                  items:
+ *                                      type: string
+ *                                      description: The categories of the product.
+ *                                      example: ["Shoes", "Sports"]
+ *          400:
+ *              description: Bad request, invalid or missing data.
+ *          401:
+ *              description: Unauthorized, invalid or missing token.
+ *          500:
+ *              description: Server error.
+ */
 productRouter.post("/", verifyAccessToken, async(req, res, next)=>{
     try{
         const validatedData = ProductSchema.parse(req.body)
