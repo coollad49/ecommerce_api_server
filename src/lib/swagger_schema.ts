@@ -71,3 +71,38 @@
  *              - stock
  *              - categories
  */
+
+/**
+ * @openapi
+ * components:
+ *  schema:
+ *      ProductResponse:
+ *          type: object
+ *          properties:
+ *              id:
+ *                  type: string
+ *                  description: The ID of the newly created product.
+ *                  example: "abc123"
+ *              name:
+ *                  type: string
+ *                  description: The name of the product.
+ *                  example: "Nike Shoe"
+ *              description:
+ *                  type: string
+ *                  description: The description of the product.
+ *                  example: "A nice brand"
+ *              price:
+ *                  type: number
+ *                  description: The price of the product.
+ *                  example: 10000
+ *              stock:
+ *                  type: number
+ *                  description: The available stock of the product.
+ *                  example: 4
+ *              categories:
+ *                  type: array
+ *                  items:
+ *                      type: string
+ *                      description: The categories of the product.
+ *                      example: ["Shoes", "Sports"]
+ */
