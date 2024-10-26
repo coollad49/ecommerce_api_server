@@ -8,6 +8,23 @@ import { customRequest } from "@/lib/Interfaces";
 
 const cartRouter = express.Router()
 
+/**
+ * @openapi
+ * /cart:
+ *  get:
+ *      tags:
+ *          - Cart
+ *      summary: Gets a user Cart.
+ *      security:
+ *          - bearerAuth: []
+ *      responses:
+ *          200:
+ *              description: Success
+ *          404:
+ *              description: Cart not found.
+ *          500:
+ *              description: Database Error.
+ */
 cartRouter.get("/", verifyAccessToken, async(req, res, next)=>{
     try {
         const cart = await prisma.cart.findUnique({
