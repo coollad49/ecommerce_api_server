@@ -231,6 +231,26 @@ productRouter.patch("/:id", verifyAccessToken, async(req, res, next)=>{
     }
 })
 
+/**
+ * @openapi
+ * /products/{id}:
+ *  delete:
+ *      tags:
+ *          - Products
+ *      summary: Deletes a product.
+ *      security:
+ *          -bearerAuth: []
+ *      parameters:
+ *      - name: id
+ *        in: path
+ *        description: The id of the product
+ *        required: true
+ *      responses:
+ *          200:
+ *              description: Product deleted successfully.
+ *          404:
+ *              description: Product not found.
+ */
 productRouter.delete("/:id", verifyAccessToken, async(req, res, next)=>{
     try{
         const deletedProduct = await prisma.product.delete({
