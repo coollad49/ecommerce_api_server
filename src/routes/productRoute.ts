@@ -127,6 +127,75 @@ productRouter.post("/", verifyAccessToken, async(req, res, next)=>{
     }
 })
 
+/**
+ * @openapi
+ * /products/{id}:
+ *  patch:
+ *      tags:
+ *          - Products
+ *      security:
+ *          - bearerAuth: []
+ *      summary: Modify product details.
+ *      description: This endpoint allows authorized users (typically admins or store managers) to modify a product. Users must provide the necessary product details such as name, description, price, and category. The updated product will then be saved in the database, and a response containing the created product's information will be returned. Validation ensures that all required fields are provided and meet the expected criteria. If any required data is missing or invalid, an error response will be returned.
+ *      parameters:
+ *      - name: id
+ *        in: path
+ *        description: The id of the product
+ *        required: true
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          name:
+ *                              type: string
+ *                              example: "moonlight shoes"
+ *                          description:
+ *                              type: string
+ *                              example: "Blacker @ night"
+ *                          price:
+ *                              type: number
+ *                              example: 6000000
+ *                          stock:
+ *                              type: number
+ *                              example: 2
+ *      responses:
+ *          201:
+ *              description: Product successfully Updated.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              id:
+ *                                  type: string
+ *                                  description: The ID of the newly created product.
+ *                                  example: "abc123"
+ *                              name:
+ *                                  type: string
+ *                                  description: The name of the product.
+ *                                  example: "Nike Shoe"
+ *                              description:
+ *                                  type: string
+ *                                  description: The description of the product.
+ *                                  example: "A nice brand"
+ *                              price:
+ *                                  type: number
+ *                                  description: The price of the product.
+ *                                  example: 10000
+ *                              stock:
+ *                                  type: number
+ *                                  description: The available stock of the product.
+ *                                  example: 4
+ *          400:
+ *              description: Bad request, invalid or missing data.
+ *          401:
+ *              description: Unauthorized, invalid or missing token.
+ *          500:
+ *              description: Server error.
+ */
 productRouter.patch("/:id", verifyAccessToken, async(req, res, next)=>{
     try{
         const validatedData = PatchedProductSchema.parse(req.body)
