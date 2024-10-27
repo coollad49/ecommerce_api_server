@@ -64,6 +64,37 @@ cartRouter.get("/", verifyAccessToken, async(req, res, next)=>{
     }
 })
 
+/**
+ * @openapi
+ * /cart/{id}:
+ *  post:
+ *      tags:
+ *          - Cart
+ *      summary: add a product to a user Cart.
+ *      parameters:
+ *      - name: id
+ *        in: path
+ *        description: The id of the Product
+ *        required: true
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          quantity:
+ *                              type: number
+ *      security:
+ *          - bearerAuth: []
+ *      responses:
+ *          200:
+ *              description: Product added to cart successfully
+ *          404:
+ *              description: Cart not found.
+ *          500:
+ *              description: Database Error.
+ */
 cartRouter.post("/:productId", verifyAccessToken, async(req, res, next)=>{
     const { productId } = req.params;
     const {quantity} = req.body;
