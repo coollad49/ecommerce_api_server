@@ -195,6 +195,23 @@ cartRouter.delete("/:productId", verifyAccessToken, async(req, res, next)=>{
     }
 })
 
+/**
+ * @openapi
+ * /cart:
+ *  delete:
+ *      tags:
+ *          - Cart
+ *      summary: removes all products in a cart.
+ *      security:
+ *          - bearerAuth: []
+ *      responses:
+ *          200:
+ *              description: Cart Deleted.
+ *          404:
+ *              description: Cart not found.
+ *          500:
+ *              description: Database Error.
+ */
 cartRouter.delete("/", verifyAccessToken, async(req, res, next)=>{
     try {
         await prisma.cart.delete({
