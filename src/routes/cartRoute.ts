@@ -136,6 +136,28 @@ cartRouter.post("/:productId", verifyAccessToken, async(req, res, next)=>{
     }
 })
 
+/**
+ * @openapi
+ * /cart/{id}:
+ *  delete:
+ *      tags:
+ *          - Cart
+ *      summary: deletes a product from a user Cart.
+ *      parameters:
+ *      - name: id
+ *        in: path
+ *        description: The id of the Product
+ *        required: true
+ *      security:
+ *          - bearerAuth: []
+ *      responses:
+ *          200:
+ *              description: Product deleted successfully
+ *          404:
+ *              description: Cart not found / Product not in Cart.
+ *          500:
+ *              description: Database Error.
+ */
 cartRouter.delete("/:productId", verifyAccessToken, async(req, res, next)=>{
     const { productId } = req.params;
     try{
