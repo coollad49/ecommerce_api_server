@@ -234,6 +234,34 @@ cartRouter.delete("/", verifyAccessToken, async(req, res, next)=>{
     }
 })
 
+/**
+ * @openapi
+ * /cart/summary:
+ *  get:
+ *      tags:
+ *          - Cart
+ *      summary: Provides a summary on items and price in cart.
+ *      security:
+ *          - bearerAuth: []
+ *      responses:
+ *          200:
+ *              description: Success
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              totalItems:
+ *                                  type: number
+ *                                  example: 23
+ *                              totalPrice:
+ *                                  type: number
+ *                                  example: 400000
+ *          404:
+ *              description: Cart not found / Product not in Cart.
+ *          500:
+ *              description: Database Error.
+ */
 cartRouter.get("/summary", verifyAccessToken, async(req, res, next)=>{
     try {
         const cart = await prisma.cart.findUnique({
